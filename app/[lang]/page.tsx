@@ -1,44 +1,53 @@
-import { RestaurantCard } from "./components/RestaurantCard";
-import { Header } from "./components/Header";
-import { SearchBar } from "./components/SearchBar";
-import { ThemeBadges } from "./components/ThemeBadges";
-import { restaurantApi } from "@/shared/api/restaurants";
+import { RestaurantCard } from "@/entities/restaurant/ui/RestaurantCard";
+import { Header } from "@/features/navigation/ui/Header";
+import { SearchBar } from "@/features/search/ui/SearchBar";
+import { ThemeBadges } from "@/features/theme/ui/ThemeBadges";
+import { restaurantService } from "@/shared/api/restaurant/restaurantPort";
 import type { Restaurant } from "@/entities/restaurant/model/types";
+import { i18n, type Locale } from "@/shared/i18n/settings";
+import { getDictionary } from "@/shared/i18n/dictionaries";
 
-// 랜덤으로 6개의 레스토랑을 선택하는 함수
+// 랜덤으로 지정된 개수의 레스토랑을 선택하는 함수
 function getRandomRestaurants(restaurants: Restaurant[], count: number) {
   const shuffled = [...restaurants].sort(() => 0.5 - Math.random());
   return shuffled.slice(0, count);
 }
 
-export default async function Home() {
-  // 모든 레스토랑을 가져온 후 랜덤으로 6개 선택
-  const allRestaurants = await restaurantApi.getRestaurants();
+interface HomePageProps {
+  params: Promise<{
+    lang: Locale;
+  }>;
+}
+
+export default async function Home(props: HomePageProps) {
+  const params = await props.params;
+  const lang = params.lang;
+  const dictionary = await getDictionary(lang);
+  const allRestaurants = await restaurantService.getRestaurants();
   const randomRestaurants = getRandomRestaurants(allRestaurants, 6);
+  const themes = await restaurantService.getAllThemes();
 
   return (
     <>
       <Header />
       <main className="min-h-screen bg-background">
-        {/* 모바일 컨테이너 */}
         <div className="mx-auto w-full max-w-[480px] px-4 py-6">
-          {/* 검색바 섹션 */}
           <section className="mb-4">
             <SearchBar />
           </section>
 
-          {/* 테마 뱃지 섹션 */}
           <section className="mb-8">
-            <ThemeBadges />
+            <ThemeBadges themes={themes} />
           </section>
 
-          {/* 레스토랑 목록 섹션 */}
           <section>
             <div className="flex items-center gap-2 mb-4">
               <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
-                Recommended
+                {dictionary.recommended}
               </span>
-              <h2 className="text-xl font-semibold">Restaurant List</h2>
+              <h2 className="text-xl font-semibold">
+                {dictionary.restaurantList}
+              </h2>
             </div>
             <div className="grid grid-cols-2 gap-3">
               {randomRestaurants.map((restaurant) => (
@@ -56,4 +65,8 @@ export default async function Home() {
       </main>
     </>
   );
+}
+
+export async function generateStaticParams() {
+  return i18n.locales.map((locale) => ({ lang: locale }));
 }

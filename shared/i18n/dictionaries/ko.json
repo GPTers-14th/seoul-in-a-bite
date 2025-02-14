@@ -1,0 +1,14 @@
+{
+  "recommended": "추천",
+  "restaurantList": "맛집 목록",
+  "themeNotFoundTitle": "존재하지 않는 테마입니다",
+  "themeNotFoundDescription": "요청하신 테마를 찾을 수 없습니다.",
+  "chooseAnotherTheme": "다른 테마를 선택해주세요.",
+  "home": "홈으로 돌아가기",
+  "theme": "테마",
+  "noRestaurantsFoundTitle": "등록된 맛집이 없습니다",
+  "noRestaurantsFoundDescription": "아직 이 테마에 등록된 맛집이 없습니다.",
+  "restaurantsFound": "개의 맛집을 찾았습니다",
+  "appName": "맛집 찾기",
+  "appDescription": "내 주변의 맛집을 찾아보세요"
+}

@@ -1,0 +1,14 @@
+{
+  "recommended": "推薦",
+  "restaurantList": "餐廳列表",
+  "themeNotFoundTitle": "主題不存在",
+  "themeNotFoundDescription": "找不到請求的主題。",
+  "chooseAnotherTheme": "請選擇其他主題。",
+  "home": "返回首頁",
+  "theme": "主題",
+  "noRestaurantsFoundTitle": "沒有餐廳",
+  "noRestaurantsFoundDescription": "該主題下尚未添加任何餐廳。",
+  "restaurantsFound": "家餐廳",
+  "appName": "首尔美食",
+  "appDescription": "发现首尔最好的餐厅"
+}

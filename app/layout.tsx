@@ -1,31 +1,40 @@
-import "./globals.css";
+import "@/shared/styles/globals.css";
 import type { Metadata } from "next";
-import { Noto_Sans_KR } from "next/font/google";
-import Script from "next/script";
+import { Inter } from "next/font/google";
+import ClientLayout from "@/shared/ui/layout/ClientLayout";
+import { getDictionary } from "@/shared/i18n/dictionaries";
+import type { Locale } from "@/shared/i18n/settings";
 
-const notoSansKr = Noto_Sans_KR({
-  subsets: ["latin"],
-  weight: ["400", "500", "700"],
-});
+const inter = Inter({ subsets: ["latin"] });
 
-export const metadata: Metadata = {
-  title: "Seoul in a Bite",
-  description: "Discover the best restaurants in Seoul",
-};
-
-export default function RootLayout({
-  children,
-}: {
+interface RootLayoutProps {
   children: React.ReactNode;
-}) {
+  params: Promise<{
+    lang: Locale;
+  }>;
+}
+
+export async function generateMetadata(props: RootLayoutProps): Promise<Metadata> {
+  const params = await props.params;
+  const dictionary = await getDictionary(params.lang);
+
+  return {
+    title: dictionary.appName,
+    description: dictionary.appDescription,
+  };
+}
+
+export default async function RootLayout(props: RootLayoutProps) {
+  const params = await props.params;
+
+  const {
+    children
+  } = props;
+
   return (
-    <html lang="ko">
-      <body className={`${notoSansKr.className} antialiased`}>
-        {children}
-        <Script
-          strategy="beforeInteractive"
-          src={`https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=${process.env.NEXT_PUBLIC_NAVER_MAP_CLIENT_ID}`}
-        />
+    <html lang={params.lang}>
+      <body className={inter.className}>
+        <ClientLayout>{children}</ClientLayout>
       </body>
     </html>
   );

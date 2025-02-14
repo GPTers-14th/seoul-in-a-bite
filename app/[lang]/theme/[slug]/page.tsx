@@ -1,15 +1,29 @@
-import { RestaurantCard } from "@/app/components/RestaurantCard";
-import { Header } from "@/app/components/Header";
+import { RestaurantCard } from "@/entities/restaurant/ui/RestaurantCard";
+import { Header } from "@/features/navigation/ui/Header";
 import Link from "next/link";
 import { ArrowLeft, SearchX } from "lucide-react";
-import { restaurantApi } from "@/shared/api/restaurants";
+import { restaurantApi } from "@/shared/api/restaurant/restaurantAdapter";
+import { getDictionary } from "@/shared/i18n/dictionaries";
+import type { Locale } from "@/shared/i18n/settings";
 
 interface ThemePageProps {
-  params: Promise<{ slug: string }> | undefined;
+  params: Promise<{
+    slug: string;
+    lang: Locale;
+  }>;
 }
 
-export default async function ThemePage({ params }: ThemePageProps) {
-  if (!params) {
+export default async function ThemePage(props: ThemePageProps) {
+  const params = await props.params;
+
+  const {
+    slug,
+    lang
+  } = params;
+
+  const dictionary = await getDictionary(lang);
+
+  if (!slug) {
     return (
       <>
         <Header showCloseButton />
@@ -18,19 +32,19 @@ export default async function ThemePage({ params }: ThemePageProps) {
             <div className="flex flex-col items-center justify-center gap-4 py-12">
               <SearchX className="h-12 w-12 text-muted-foreground" />
               <h1 className="text-xl font-semibold">
-                존재하지 않는 테마입니다
+                {dictionary.themeNotFoundTitle}
               </h1>
               <p className="text-sm text-muted-foreground text-center">
-                요청하신 테마를 찾을 수 없습니다.
+                {dictionary.themeNotFoundDescription}
                 <br />
-                다른 테마를 선택해주세요.
+                {dictionary.chooseAnotherTheme}
               </p>
               <Link
                 href="/"
                 className="inline-flex items-center gap-2 text-sm text-primary hover:text-primary/80 transition-colors"
               >
                 <ArrowLeft className="h-4 w-4" />
-                홈으로 돌아가기
+                {dictionary.home}
               </Link>
             </div>
           </div>
@@ -38,9 +52,6 @@ export default async function ThemePage({ params }: ThemePageProps) {
       </>
     );
   }
-
-  const { slug } = await params;
-  // const theme = THEMES.find((t) => t.slug === slug); // MOCK_RESTAURANTS 대신 실제 API 호출
 
   const restaurants = await restaurantApi.getRestaurantsByTheme(slug);
   const theme = await restaurantApi.getThemeBySlug(slug);
@@ -54,19 +65,19 @@ export default async function ThemePage({ params }: ThemePageProps) {
             <div className="flex flex-col items-center justify-center gap-4 py-12">
               <SearchX className="h-12 w-12 text-muted-foreground" />
               <h1 className="text-xl font-semibold">
-                존재하지 않는 테마입니다
+                {dictionary.themeNotFoundTitle}
               </h1>
               <p className="text-sm text-muted-foreground text-center">
-                요청하신 테마를 찾을 수 없습니다.
+                {dictionary.themeNotFoundDescription}
                 <br />
-                다른 테마를 선택해주세요.
+                {dictionary.chooseAnotherTheme}
               </p>
               <Link
                 href="/"
                 className="inline-flex items-center gap-2 text-sm text-primary hover:text-primary/80 transition-colors"
               >
                 <ArrowLeft className="h-4 w-4" />
-                홈으로 돌아가기
+                {dictionary.home}
               </Link>
             </div>
           </div>
@@ -83,12 +94,13 @@ export default async function ThemePage({ params }: ThemePageProps) {
           <section className="mb-6">
             <div className="flex items-center gap-2 mb-4">
               <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
-                Theme
+                {dictionary.theme}
               </span>
               <h1 className="text-xl font-semibold">{theme.title}</h1>
             </div>
             <p className="text-sm text-muted-foreground">
-              {restaurants.length}개의 맛집을 찾았습니다
+              {restaurants.length}
+              {dictionary.restaurantsFound}
             </p>
           </section>
 
@@ -107,18 +119,20 @@ export default async function ThemePage({ params }: ThemePageProps) {
           ) : (
             <section className="flex flex-col items-center justify-center gap-4 py-12">
               <SearchX className="h-12 w-12 text-muted-foreground" />
-              <h2 className="text-lg font-medium">등록된 맛집이 없습니다</h2>
+              <h2 className="text-lg font-medium">
+                {dictionary.noRestaurantsFoundTitle}
+              </h2>
               <p className="text-sm text-muted-foreground text-center">
-                아직 이 테마에 등록된 맛집이 없습니다.
+                {dictionary.noRestaurantsFoundDescription}
                 <br />
-                다른 테마를 선택해주세요.
+                {dictionary.chooseAnotherTheme}
               </p>
               <Link
                 href="/"
                 className="inline-flex items-center gap-2 text-sm text-primary hover:text-primary/80 transition-colors"
               >
                 <ArrowLeft className="h-4 w-4" />
-                홈으로 돌아가기
+                {dictionary.home}
               </Link>
             </section>
           )}
